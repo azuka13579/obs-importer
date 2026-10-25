@@ -22,7 +22,7 @@ function joinPath(folder, file) {
  * log(msg, level) dan onProgress(text) dipakai untuk memberi kabar ke tampilan.
  */
 export async function runImport({ obs, scenes, folder, options, transitions, log, onProgress }) {
-  const { newCollection, collectionName, fit, loop, switchFirst } = options;
+  const { newCollection, collectionName, fit, switchFirst } = options;
   const step = async (promise, failMsg) => {
     try { await promise; return true; } catch (e) { log(`${failMsg}: ${e.message}`, 'warn'); return false; }
   };
@@ -103,7 +103,7 @@ export async function runImport({ obs, scenes, folder, options, transitions, log
             inputKind = 'image_source'; inputSettings = { file: path }; label = stripExt(src.file) + ' (gambar)';
           } else {
             inputKind = 'ffmpeg_source';
-            inputSettings = { local_file: path, is_local_file: true, restart_on_activate: true, looping: src.type === 'video' ? loop : false };
+            inputSettings = { local_file: path, is_local_file: true, restart_on_activate: true, looping: !!src.loop };
             label = stripExt(src.file) + (src.type === 'audio' ? ' (audio)' : ' (video)');
           }
         }

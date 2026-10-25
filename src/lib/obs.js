@@ -72,9 +72,10 @@ export class OBSClient {
   connect(url, password) {
     return new Promise((resolve, reject) => {
       let settled = false, ws;
-      const fail = msg => {
+      const fail = (msg, kind) => {
         if (settled) return;
-        settled = true; reject(new Error(msg));
+        settled = true;
+        const err = new Error(msg); err.kind = kind; reject(err);
         try { ws.close(); } catch { /* sudah tertutup */ }
       };
       try { ws = new WebSocket(url); } catch { reject(new Error('Alamat server tidak valid.')); return; }
@@ -87,7 +88,7 @@ export class OBSClient {
           const d = { rpcVersion: 1 };
           const auth = msg.d.authentication;
           if (auth) {
-            if (!password) { fail('OBS meminta password. Isi kolom password lalu coba lagi.'); return; }
+            if (!password) { fail('OBS meminta password. Isi kolom password lalu coba lagi.', 'auth'); return; }
             d.authentication = await makeAuth(password, auth.salt, auth.challenge);
           }
           ws.send(JSON.stringify({ op: 1, d }));
@@ -105,9 +106,10 @@ export class OBSClient {
           }
         }
       };
-      ws.onerror = () => fail('Tidak bisa tersambung. Pastikan OBS terbuka, WebSocket server aktif, dan jika browser meminta izin akses jaringan lokal, pilih Izinkan.');
+      ws.onerror = () => fail('Tidak bisa tersambung ke OBS.', 'network');
       ws.onclose = ev => {
-        fail(ev.code === 4009 ? 'Password salah.' : 'Koneksi ditutup (kode ' + ev.code + ').');
+        if (ev.code === 4009) fail('Password salah.', 'auth');
+        else fail('Koneksi ditutup (kode ' + ev.code + ').', ev.code === 1006 ? 'network' : undefined);
         const wasIdentified = this.identified;
         this.identified = false; this.ws = null;
         this.pending.forEach(p => p.reject(new Error('Koneksi ke OBS terputus.')));

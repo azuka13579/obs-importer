@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import { FILTERS, MONITOR_LABEL, clampDb } from '../lib/rundown.js';
 
-export default function AudioControls({ value, onChange }) {
+export default function AudioControls({ value, onChange, hideMonitor = false }) {
   const id = useId();
   const [draft, setDraft] = useState(String(value.volume));
   useEffect(() => { setDraft(String(value.volume)); }, [value.volume]);
@@ -41,12 +41,14 @@ export default function AudioControls({ value, onChange }) {
         <label className="chk">
           <input type="checkbox" checked={value.muted} onChange={e => set({ muted: e.target.checked })} /> Mute
         </label>
-        <label className="sel">
-          Monitoring
-          <select value={value.monitor} onChange={e => set({ monitor: e.target.value })}>
-            {Object.entries(MONITOR_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-          </select>
-        </label>
+        {!hideMonitor && (
+          <label className="sel">
+            Monitoring
+            <select value={value.monitor} onChange={e => set({ monitor: e.target.value })}>
+              {Object.entries(MONITOR_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </label>
+        )}
       </div>
       <div className="line">
         <span className="lbl">Filter</span>

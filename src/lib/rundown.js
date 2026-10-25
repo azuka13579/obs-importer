@@ -23,7 +23,7 @@ export const FILTERS = [
   { id: 'comp', label: 'Compressor', prefix: 'compressor_filter', fallback: 'compressor_filter', alias: ['comp', 'compressor', 'kompresor'] },
   { id: 'limit', label: 'Limiter', prefix: 'limiter_filter', fallback: 'limiter_filter', alias: ['limit', 'limiter'] },
 ];
-export const DEFAULT_AUDIO = { volume: 0, muted: false, monitor: 'none', filters: [] };
+export const DEFAULT_AUDIO = { volume: 0, muted: false, monitor: 'both', filters: [] };
 
 export const hasAudio = t => t === 'video' || t === 'audio';
 export const cloneAudio = a => ({ volume: a.volume, muted: a.muted, monitor: a.monitor, filters: [...a.filters] });
@@ -104,12 +104,13 @@ export function makeSource(type, value, defaults, opts = {}) {
     ? { id: nextId(), type, text: String(value) }
     : { id: nextId(), type, file: String(value).trim().replace(/^"|"$/g, '') };
   src.hidden = !!opts.hidden;
+  if (type === 'video') src.loop = opts.loop ?? !!defaults.loop;
   if (hasAudio(type)) {
     src.audio = {
-      volume: opts.volume ?? defaults.volume,
-      muted: opts.muted ?? defaults.muted,
-      monitor: opts.monitor ?? defaults.monitor,
-      filters: opts.filters ?? [...defaults.filters],
+      volume: opts.volume ?? defaults.audio.volume,
+      muted: opts.muted ?? defaults.audio.muted,
+      monitor: opts.monitor ?? defaults.audio.monitor,
+      filters: opts.filters ?? [...defaults.audio.filters],
     };
   }
   return src;
@@ -141,7 +142,7 @@ const CSV_COLS = {
   scene: ['scene', 'nama scene', 'nama', 'name', 'adegan'], type: ['type', 'tipe', 'jenis'],
   value: ['value', 'file', 'path', 'isi', 'nilai'], volume: ['volume', 'vol'], mute: ['mute', 'muted', 'bisu'],
   monitor: ['monitor', 'monitoring'], filters: ['filters', 'filter'], hidden: ['hidden', 'sembunyi', 'sembunyikan'],
-  transition: ['transition', 'transisi'], duration: ['duration', 'durasi'],
+  transition: ['transition', 'transisi'], duration: ['duration', 'durasi'], loop: ['loop', 'ulang', 'ulangi'],
 };
 
 export function parseRundown(text, ext, defaults) {
@@ -176,6 +177,7 @@ export function parseRundown(text, ext, defaults) {
         monitor: get('monitor') ? normMonitor(get('monitor')) : undefined,
         filters: get('filters') ? parseFilters(get('filters')) : undefined,
         hidden: parseBool(get('hidden')),
+        loop: get('loop') ? parseBool(get('loop')) : undefined,
       });
       if (src) sc.sources.push(src);
     }
@@ -205,6 +207,7 @@ export function parseRundown(text, ext, defaults) {
           monitor: monVal !== undefined ? normMonitor(monVal) : undefined,
           filters: s.filters !== undefined ? parseFilters(s.filters) : undefined,
           hidden: parseBool(s.hidden),
+          loop: s.loop !== undefined ? parseBool(s.loop) : undefined,
         });
         if (src) sc.sources.push(src);
       }
@@ -220,7 +223,7 @@ export function sourceSummary(src) {
     const a = src.audio;
     if (a.volume !== 0) parts.push(fmtDb(a.volume));
     if (a.muted) parts.push('Mute');
-    if (a.monitor !== 'none') parts.push(MONITOR_LABEL[a.monitor]);
+    if (a.monitor === 'monitor') parts.push(MONITOR_LABEL.monitor);
     a.filters.forEach(f => parts.push(FILTERS.find(x => x.id === f).label));
   }
   if (src.hidden) parts.push('Disembunyikan');

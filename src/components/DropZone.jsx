@@ -54,23 +54,23 @@ export default function DropZone({ disabled, onFiles }) {
 Sesi 1
 Penutup`}</pre>
         <p><b>.csv</b>: baris berurutan dengan nama scene yang sama masuk ke scene yang sama. Selain <code>scene</code>, semua kolom boleh dikosongkan atau dihilangkan.</p>
-        <pre>{`scene,type,value,volume,mute,monitor,filters,hidden,transition,duration
-Opening,video,C:\\Acara\\intro.mp4,-6,,both,,,Fade,800
-Opening,text,Selamat datang!,,,,,,,
-Sesi 1,audio,C:\\Acara\\musik.mp3,30%,,,,,,
-Sesi 1,video,kamera.mp4,,,monitor,noise|compressor,,Cut,
-Penutup,image,C:\\Acara\\penutup.png,,,,,ya,,`}</pre>
+        <pre>{`scene,type,value,volume,mute,monitor,filters,hidden,transition,duration,loop
+Opening,video,C:\\Acara\\intro.mp4,-6,,both,,,Fade,800,ya
+Opening,text,Selamat datang!,,,,,,,,
+Sesi 1,audio,C:\\Acara\\musik.mp3,30%,,,,,,,
+Sesi 1,video,kamera.mp4,,,off,noise|compressor,,Cut,,
+Penutup,image,C:\\Acara\\penutup.png,,,,,ya,,,`}</pre>
         <p><b>.json</b>:</p>
         <pre>{`[
   { "name": "Opening", "transition": "Fade", "duration": 800, "sources": [
-      { "type": "video", "file": "C:/Acara/intro.mp4", "volume": -6, "monitor": "both" },
+      { "type": "video", "file": "C:/Acara/intro.mp4", "volume": -6, "loop": true },
       { "type": "text",  "text": "Selamat datang!" } ] },
   { "name": "Sesi 1", "sources": [
       { "type": "audio", "file": "musik.mp3", "volume": "30%", "filters": ["noise", "compressor"] } ] },
   "Penutup"
 ]`}</pre>
-        <p>Isi kolom: <code>type</code> = video, image, audio, atau text. <code>volume</code> dalam dB (misalnya -6) atau persen (misalnya 30%). <code>monitor</code> = off, monitor, atau both. <code>filters</code> = noise, gate, compressor, limiter, dipisah dengan <code>|</code>. <code>mute</code> dan <code>hidden</code> diisi ya atau tidak. <code>transition</code> memakai nama transisi persis seperti di OBS, dan <code>duration</code> dalam milidetik.</p>
-        <p>Kolom audio yang kosong mengikuti pengaturan audio bawaan. Path yang bukan path lengkap digabung dengan folder media. Source paling atas di daftar berada di lapisan paling bawah di OBS.</p>
+        <p>Isi kolom: <code>type</code> = video, image, audio, atau text. <code>volume</code> dalam dB (misalnya -6) atau persen (misalnya 30%). <code>monitor</code> = off, monitor, atau both (bawaannya both). <code>filters</code> = noise, gate, compressor, limiter, dipisah dengan <code>|</code>. <code>mute</code>, <code>hidden</code>, dan <code>loop</code> diisi ya atau tidak (loop hanya untuk video, bawaannya tidak). <code>transition</code> memakai nama transisi persis seperti di OBS, dan <code>duration</code> dalam milidetik.</p>
+        <p>Kolom audio dan loop yang kosong mengikuti kartu Bawaan file baru. Path yang bukan path lengkap digabung dengan folder media. Source paling atas di daftar berada di lapisan paling bawah di OBS.</p>
       </details>
     </section>
   );

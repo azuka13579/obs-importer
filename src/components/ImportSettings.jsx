@@ -1,7 +1,5 @@
-import AudioControls from './AudioControls.jsx';
-
 export default function ImportSettings({
-  options, onOptions, showFolder, folder, onFolder, globalAudio, onGlobalAudio, onApplyAll,
+  options, onOptions, showFolder, folder, onFolder,
   canImport, canClear, importing, progress, onImport, onClear,
 }) {
   const set = patch => onOptions({ ...options, ...patch });
@@ -46,23 +44,10 @@ export default function ImportSettings({
           Sesuaikan video dan gambar ke layar
         </label>
         <label className="chk">
-          <input type="checkbox" checked={options.loop} onChange={e => set({ loop: e.target.checked })} />
-          Ulangi video (loop)
-        </label>
-        <label className="chk">
           <input type="checkbox" checked={options.switchFirst} onChange={e => set({ switchFirst: e.target.checked })} />
           Pindah ke scene pertama setelah selesai
         </label>
       </div>
-
-      <h3>Audio bawaan</h3>
-      <p className="hint">Dipakai untuk video dan audio yang baru ditambahkan. Setiap source tetap bisa diatur sendiri lewat tombol Atur.</p>
-      <div className="panel">
-        <AudioControls value={globalAudio} onChange={onGlobalAudio} />
-      </div>
-      <button type="button" className="block" onClick={onApplyAll} disabled={importing}>
-        Terapkan ke semua video dan audio
-      </button>
 
       <div className="bar">
         <button type="button" className="primary grow" disabled={!canImport} onClick={onImport}>
