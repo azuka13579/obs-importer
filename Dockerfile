@@ -1,5 +1,6 @@
 # ---------- Tahap 1: build aplikasi React ----------
-FROM node:22-alpine AS build
+# Hasilnya file statis, jadi cukup di-build sekali di arsitektur runner (tanpa emulasi QEMU).
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
