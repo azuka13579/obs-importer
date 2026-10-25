@@ -1,0 +1,7 @@
+services:
+  obs-importer:
+    image: ghcr.io/azuka13579/obs-importer:latest
+    # build: .   # aktifkan untuk build lokal
+    ports:
+      - "8080:80"
+    restart: unless-stopped
