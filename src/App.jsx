@@ -12,6 +12,8 @@ import ImportSettings from './components/ImportSettings.jsx';
 import DefaultsCard from './components/DefaultsCard.jsx';
 import LogPanel from './components/LogPanel.jsx';
 import { TutorialCard, TutorialModal } from './components/Tutorial.jsx';
+import TagManager from 'react-gtm-module';
+  
 
 const DEFAULT_ADDR = 'ws://127.0.0.1:4455';
 const DEFAULT_CONN = { addr: DEFAULT_ADDR, password: '', remember: true, autoConnect: true, lastOk: false };
@@ -168,6 +170,13 @@ export default function App() {
       setImporting(false);
     }
   };
+  const tagManagerArgs = {
+    gtmId: 'GTM-NZZ5Z4JP' // Ganti dengan Container ID GTM Anda
+  };
+
+  useEffect(() => {
+    TagManager.initialize(tagManagerArgs);
+  }, []);
 
   return (
     <div className="app">
